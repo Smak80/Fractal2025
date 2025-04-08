@@ -1,7 +1,5 @@
 package ru.smak.fractals.ui;
 
-import org.jetbrains.annotations.NotNull;
-
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;

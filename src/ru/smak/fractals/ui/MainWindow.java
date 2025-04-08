@@ -45,7 +45,5 @@ public class MainWindow extends JFrame {
     private void initializeComponents() {
         mainPanel = new PaintPanel();
         mainPanel.setBackground(Color.WHITE);
-
-        mainPanel.addPaintAction(_ -> fp.paint(mainPanel.getGraphics()));
     }
 }

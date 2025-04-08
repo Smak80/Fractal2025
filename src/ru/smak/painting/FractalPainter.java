@@ -4,11 +4,9 @@ import ru.smak.graphics.utils.Converter;
 
 import java.awt.*;
 
-public class FractalPainter implements Painter, Runnable{
+public class FractalPainter implements Painter{
 
     private final Converter conv;
-    private Thread paintThread = null;
-    private Graphics g = null;
 
     public FractalPainter(Converter conv){
         this.conv = conv;
@@ -36,35 +34,7 @@ public class FractalPainter implements Painter, Runnable{
 
     @Override
     public void paint(Graphics g) {
-        this.g = g;
-        if (paintThread != null && paintThread.isAlive()){
-            stop();
-            try {
-                paintThread.join();
-            } catch (InterruptedException _){}
-            finally { paintThread = null; }
-        }
-        paintThread = new Thread(this);
-        paintThread.start();
+
     }
 
-    @Override
-    public void run() {
-        if (g != null) {
-            g.setColor(Color.RED);
-            g.fillRect(30, 30, 200, 250);
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                g.setColor(Color.YELLOW);
-                g.fillRect(30, 30, 200, 250);
-            }
-            g.setColor(Color.GREEN);
-            g.fillRect(30, 30, 200, 250);
-        }
-    }
-
-    private void stop(){
-        if (paintThread != null) paintThread.interrupt();
-    }
 }
