@@ -1,10 +1,13 @@
 package ru.smak.fractals.ui;
 
 import ru.smak.graphics.utils.Converter;
+import ru.smak.painting.CartesianPainter;
 import ru.smak.painting.FractalPainter;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 
 public class MainWindow extends JFrame {
 
@@ -15,6 +18,7 @@ public class MainWindow extends JFrame {
 
     private final Converter conv = new Converter(-2.0, 1.0, -1.0, 1.0, 0, 0);
     private final FractalPainter fp = new FractalPainter(conv);
+    private final CartesianPainter cp = new CartesianPainter(conv);
 
     public MainWindow(){
         Dimension minSz = new Dimension(800, 600);
@@ -44,6 +48,19 @@ public class MainWindow extends JFrame {
 
     private void initializeComponents() {
         mainPanel = new PaintPanel();
+        mainPanel.setScalable(true);
         mainPanel.setBackground(Color.WHITE);
+        mainPanel.setPaintAction(g -> {
+            cp.paint(g);
+            fp.paint(g);
+        });
+        mainPanel.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                super.componentResized(e);
+                conv.setWidth(mainPanel.getWidth());
+                conv.setHeight(mainPanel.getHeight());
+            }
+        });
     }
 }
