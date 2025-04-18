@@ -48,7 +48,17 @@ public class MainWindow extends JFrame {
 
     private void initializeComponents() {
         mainPanel = new PaintPanel();
-        mainPanel.setScalable(true);
+        mainPanel.addSelectListener(r -> {
+            try {
+                var xMin = conv.xScr2Crt(r.getX());
+                var xMax = conv.xScr2Crt(r.getX() + r.getWidth());
+                var yMin = conv.yScr2Crt(r.getY() + r.getHeight());
+                var yMax = conv.yScr2Crt(r.getY());
+                conv.setXShape(xMin, xMax);
+                conv.setYShape(yMin, yMax);
+                mainPanel.repaint();
+            } catch (InvalidRectException _) { }
+        });
         mainPanel.setBackground(Color.WHITE);
         mainPanel.setPaintAction(g -> {
             cp.paint(g);

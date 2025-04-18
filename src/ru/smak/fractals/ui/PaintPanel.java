@@ -14,6 +14,12 @@ public class PaintPanel extends JPanel {
         @Override
         public void mousePressed(MouseEvent e) {
             super.mousePressed(e);
+            g = getGraphics();
+            // Исправление бага с XOR-Mode
+            g.setXORMode(Color.WHITE);
+            g.fillRect(-10, -10, 1, 1);
+            g.setPaintMode();
+
             rect.clear();
             rect.addPoint(e.getPoint());
         }
@@ -21,6 +27,9 @@ public class PaintPanel extends JPanel {
         @Override
         public void mouseReleased(MouseEvent e) {
             super.mouseReleased(e);
+            if (selectedAction != null){
+                selectedAction.accept(rect);
+            }
         }
 
         @Override
@@ -37,24 +46,21 @@ public class PaintPanel extends JPanel {
     }
 
     private Consumer<Graphics> paintAction = null;
-    private boolean scalable = false;
+    private Consumer<Rect> selectedAction = null;
     private MouseButtonAndMotionListener mbl = new MouseButtonAndMotionListener();
+    private Graphics g = null;
+    private Color selectionColor = Color.BLACK;
 
-    public boolean isScalable() {
-        return scalable;
+    public void addSelectListener(Consumer<Rect> l) {
+        selectedAction = l;
+        addMouseListener(mbl);
+        addMouseMotionListener(mbl);
     }
 
-    public void setScalable(boolean scalable) {
-        if (scalable != this.scalable) {
-            this.scalable = scalable;
-            if (scalable) {
-                addMouseListener(mbl);
-                addMouseMotionListener(mbl);
-            } else {
-                removeMouseListener(mbl);
-                removeMouseMotionListener(mbl);
-            }
-        }
+    public void removeSelectListener(Consumer<Rect> l){
+        selectedAction = null;
+        removeMouseListener(mbl);
+        removeMouseMotionListener(mbl);
     }
 
     public void setPaintAction(Consumer<Graphics> action){
@@ -72,12 +78,11 @@ public class PaintPanel extends JPanel {
     }
 
     private void drawRect(Rect r){
-        var g = getGraphics();
         g.setXORMode(Color.WHITE);
-        g.setColor(Color.BLACK);
+        g.setColor(selectionColor);
         try {
             g.drawRect(r.getX(), r.getY(), r.getWidth(), r.getHeight());
-        } catch (InvalidRectException e){}
+        } catch (InvalidRectException _){}
         finally {
             g.setPaintMode();
         }
